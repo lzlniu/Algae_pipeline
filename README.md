@@ -1,2 +1,3 @@
 # DeerBioPipeline
-call_variant.sh is a bioinformatics pipeline which use BWA, SAMtools and VarScan to compare the difference of multiple genome. it can generate snp and indel .vcf files from sequencing clean data (reads, fastq format).
+call_variant.sh is a bioinformatics pipeline which use BWA, SAMtools and VarScan to compare the difference of multiple genome. it can generate snp and indel .vcf files from sequencing clean data (reads, fastq format).\
+assembly+.sh is for genome assembly, using platanus and abyss, generating two sets of assembly results, which include all intermediate data (contig, etc.) and statistics (n50, max scaffold length, etc.).
