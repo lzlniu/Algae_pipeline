@@ -171,11 +171,11 @@ format         = %d
 </tick>
 </ticks>
 \" > ${i}-p_circos/etc/ticks.conf
-cp -r ${i}-p_circos /public/home/lizelin/assembly/circos-0.69-9/
-cd /public/home/lizelin/assembly/circos-0.69-9/${i}-p_circos
+cp -r ${i}-p_circos /PATH/TO/circos-0.69-9/
+cd /PATH/TO/circos-0.69-9/${i}-p_circos
 ../bin/circos -conf ./etc/circos.conf
-mv circos.png /public/home/lizelin/data/${i}/${i}.png
-mv circos.svg /public/home/lizelin/data/${i}/${i}.svg
+mv circos.png /PATH/TO/WHERE/YOU/WANT/TO/GET/RESULT/${i}/${i}.png
+mv circos.svg /PATH/TO/WHERE/YOU/WANT/TO/GET/RESULT/${i}/${i}.svg
 cd ..
 rm -rf ${i}-p_circos
 " > run_${i}.sh
