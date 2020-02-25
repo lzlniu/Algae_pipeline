@@ -1,7 +1,7 @@
 #!/bin/bash
 #author:Zelin Li
-#date:2020.02.13
-#utility:assemble paired-end clean data(reads,fastq format), use platanus and abyss.
+#date:2020.02.26
+#utility:assemble paired-end clean data(reads,fastq format), use platanus, do blast search and make circos graph.
 cd /PATH/TO/WHERE/YOU/WANT/TO/GET/RESULT
 for i in $(cat list);do
 echo "#BSUB -L /bin/bash
@@ -27,7 +27,157 @@ grep \$(cat spp) p_mt_blast.txt > p_mt_spp.txt
 rm -rf spp
 rm -rf p_intermediateResults
 rm -rf *_consensusIntermediateResults
+rm -rf scaf.*
+rm -rf p_nonBubble*
+rm -rf p_allPhasedScaffold.fa
+uniq -f 2 -w 20 p_mt_spp.txt | awk '{print \$3}' > p_mt_scaf-name
+awk '!/^>/ { printf \"%s\", \$0; n = \"\n\" } /^>/ { print n \$0; n = \"\" } END { printf \"%s\", n }' ${i}-p_consensusScaffold.fa > p_oneline_scaf.fa
+for name in \$(cat p_mt_scaf-name);do
+grep -n \${name} p_oneline_scaf.fa | awk -F ':' '{print \$1}' >> p_mt_scaf-loc
+done
+for loc in \$(cat p_mt_scaf-loc);do
+sed -n \"\${loc},\$((\${loc}+1))p\" p_oneline_scaf.fa >> p_mt_scaf.fa
+done
+rm -rf p_mt_scaf-*
+rm -rf p_oneline_scaf.fa
+mkdir ${i}-p_circos
+cd ${i}-p_circos
+mkdir data
+mkdir etc
+cd ..
+grep \$(awk 'NR==1{print \$3}' p_mt_spp.txt) p_mt_spp.txt | sort -t\$'\t' -k 10n,10 > p_mt_sppA.txt
+awk '{print \"chr1\t\"\$10\"\t\"\$11\"\tfill_color=green\"}' p_mt_sppA.txt > ${i}-p_circos/data/highlights.1.txt
+awk '{print \"chr1\t\"\$10\"\t\"\$11\"\t\"\$5}' p_mt_sppA.txt > ${i}-p_circos/data/labels.1.txt
+awk 'NR==1{print \"chr\t-\tchr1\t\"\$1\".mtDNA.circos.by.Zelin.Li\t0\t\"\$2\"\tchry\"}' p_mt_sppA.txt > ${i}-p_circos/data/mtDNAideogram.txt
+rm -rf p_mt_sppA.txt
 find . -name \"*\" -type f -size 0c | xargs -n 1 rm -f
+echo \"
+<<include etc/colors_fonts_patterns.conf>>
+<<include ideogram.conf>>
+<<include ticks.conf>>
+karyotype = data/mtDNAideogram.txt
+<image>
+<<include etc/image.conf>>
+</image>
+chromosomes_units           = 100000
+chromosomes_display_default = yes
+<<include highlights.conf>>
+<plots>
+<plot>
+type  = text
+file  = data/labels.1.txt
+color = black
+r1    = 0.970r
+r0    = 0.880r
+label_size = 16p
+label_font = default
+padding    = 1p
+rpadding   = 1p
+show_links     = yes
+link_dims      = 1p,2p,3p,2p,1p
+link_thickness = 1p
+link_color     = red
+label_snuggle        = yes
+max_snuggle_distance = 0.01r
+snuggle_sampling     = 1
+snuggle_tolerance    = 0.50r
+snuggle_link_overlap_test      = yes
+snuggle_link_overlap_tolerance = 0.02p
+snuggle_refine                 = yes
+</plot>
+</plots>
+<<include etc/housekeeping.conf>>
+data_out_of_range* = trim
+\" > ${i}-p_circos/etc/circos.conf
+echo \"
+<highlights>
+<highlight>
+file  = data/highlights.1.txt
+r1   = conf(.,r0)+0.015r
+r0   = 0.865r
+#fill_color = chr8
+</highlight>
+</highlights>
+\" > ${i}-p_circos/etc/highlights.conf
+echo \"
+<ideogram>
+<spacing>
+default = 0.005r
+break   = 0.001r
+</spacing>
+thickness        = 20p
+stroke_thickness = 2
+stroke_color     = black
+fill             = yes
+fill_color       = black
+radius         = 0.80r
+show_label     = yes
+label_font     = default
+label_radius   = dims(ideogram,radius) + 0.1r
+label_size     = 16
+label_parallel = yes
+#label_case     = upper
+band_stroke_thickness = 2
+show_bands            = yes
+fill_bands            = yes
+</ideogram>
+\" > ${i}-p_circos/etc/ideogram.conf
+echo \"
+show_ticks          = yes
+show_tick_labels    = yes
+<ticks>
+radius               = dims(ideogram,radius_outer) + 10p
+multiplier           = 1e-3
+<tick>
+spacing        = 100b
+size           = 5p
+thickness      = 1p
+color          = grey
+show_label     = no
+label_size     = 16p
+label_offset   = 0p
+format         = %d
+</tick>
+<tick>
+spacing        = 500b
+size           = 6p
+thickness      = 1p
+color          = black
+show_label     = no
+label_size     = 16p
+label_offset   = 0p
+format         = %d
+</tick>
+<tick>
+spacing        = 1000b
+size           = 8p
+thickness      = 2p
+color          = black
+show_label     = no
+label_size     = 16p
+label_offset   = 0p
+format         = %d
+</tick>
+<tick>
+spacing        = 5000b
+size           = 12p
+thickness      = 3p
+color          = black
+show_label     = yes
+suffix = \\\" kb\\\"
+label_size     = 16p
+label_offset   = 5p
+format         = %d
+</tick>
+</ticks>
+\" > ${i}-p_circos/etc/ticks.conf
+cp -r ${i}-p_circos /public/home/lizelin/assembly/circos-0.69-9/
+cd /public/home/lizelin/assembly/circos-0.69-9/${i}-p_circos
+../bin/circos -conf ./etc/circos.conf
+mv circos.png /public/home/lizelin/data/${i}/${i}.png
+mv circos.svg /public/home/lizelin/data/${i}/${i}.svg
+cd ..
+rm -rf ${i}-p_circos
 " > run_${i}.sh
 done
 for j in $(cat list);do
