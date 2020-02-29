@@ -16,13 +16,17 @@ cd ${i}
 /PATH/TO/platanus/platanus_allee assemble -f /PATH/TO/cleandata/${i}_1.fq /PATH/TO/cleandata/${i}_2.fq -o p
 /PATH/TO/platanus/platanus_allee phase -c p_contig.fa -IP1 ../cleandata/${i}_1.fq ../cleandata/${i}_2.fq -o p
 /PATH/TO/platanus/platanus_allee consensus -c p_consensusInput.fa -IP1 /PATH/TO/cleandata/${i}_1.fq /PATH/TO/cleandata/${i}_2.fq -o ${i}-p
-/PATH/TO/script/n50.sh ${i}-p_consensusScaffold.fa > p-stats
+/PATH/TO/script/n50.sh ${i}-p_consensusScaffold.fa > ${i}-p-stats
 /PATH/TO/platanus/platanus_allee consensus -c p_contig.fa -IP1 /PATH/TO/cleandata/${i}_1.fq /PATH/TO/cleandata/${i}_2.fq -o ${i}-p-nophase
-/PATH/TO/script/n50.sh ${i}-p-nophase_consensusScaffold.fa > p-nophase-stats
+/PATH/TO/script/n50.sh ${i}-p-nophase_consensusScaffold.fa > ${i}-p-nophase-stats
 rm -rf p_intermediateResults
 rm -rf *_consensusIntermediateResults
 rm -rf p_nonBubble*
 rm -rf p_allPhasedScaffold.fa
+rm -rf ${i}-p_mt_*
+rm -rf *.png
+rm -rf *.svg
+#mv p-stats ${i}-p-stats
 
 #Make blast search (for mtDNA)
 
@@ -33,10 +37,10 @@ rm -rf scaf.*
 #awk -F '\t' '\$5>=95' p_mt_blast.txt | awk -F '\t' '\$6>=2000' > p_mt_blast-pid95-len2000.txt
 
 sort -t\$'\t' -k 15rn,15 p_mt_blast.txt | awk 'NR==1{print \$1}' > spp
-grep \$(cat spp) p_mt_blast.txt > p_mt_spp.txt
+grep \$(cat spp) p_mt_blast.txt > ${i}-p_mt_spp.txt
 rm -rf spp
 
-uniq -f 2 -w 20 p_mt_spp.txt > p_mt_scaf-all
+uniq -f 2 -w 20 ${i}-p_mt_spp.txt > p_mt_scaf-all
 awk '{print \$4}' p_mt_scaf-all > scaflen
 awk '{print \$3}' p_mt_scaf-all  > scafname
 grep -n \"\" p_mt_scaf-all | awk -F ':' '{print \$1}' > scafline
@@ -61,15 +65,19 @@ rm -rf scaflen
 rm -rf scafline
 rm -rf scafname
 for scafnamesel in \$(cat scafname-sel); do
-        grep \${scafnamesel} p_mt_spp.txt >> p_mt_spp-sel.txt
+        grep \${scafnamesel} ${i}-p_mt_spp.txt >> ${i}-p_mt_spp-sel.txt
 done
+awk NR==1'{print \"closest diatom species:\"\$1}' ${i}-p_mt_spp-sel.txt > ${i}-p_mt_spp-sel-len.txt
+awk NR==1'{print \"closest diatom species mtDNA length:\"\$2}' ${i}-p_mt_spp-sel.txt >> ${i}-p_mt_spp-sel-len.txt
+uniq -f 2 -w 20 ${i}-p_mt_spp-sel.txt | wc -l | awk '{print \"number of mtDNA scaffolds:\"\$1}' >> ${i}-p_mt_spp-sel-len.txt
+uniq -f 2 -w 20 ${i}-p_mt_spp-sel.txt | awk '{sum += \$4};END {print \"sum of mtDNA scaffolds length:\"sum}' >> ${i}-p_mt_spp-sel-len.txt
 
 awk '!/^>/ { printf \"%s\", \$0; n = \"\n\" } /^>/ { print n \$0; n = \"\" } END { printf \"%s\", n }' ${i}-p_consensusScaffold.fa > p_oneline_scaf.fa
 for name in \$(cat scafname-sel);do
         grep -n \${name} p_oneline_scaf.fa | awk -F ':' '{print \$1}' >> scafloc
 done
 for loc in \$(cat scafloc);do
-        sed -n \"\${loc},\$((\${loc}+1))p\" p_oneline_scaf.fa >> p_mt_scaf.fa
+        sed -n \"\${loc},\$((\${loc}+1))p\" p_oneline_scaf.fa >> ${i}-p_mt_scaf.fa
 done
 rm -rf scafloc
 rm -rf p_oneline_scaf.fa
@@ -84,7 +92,7 @@ cd ..
 #grep \$(awk 'NR==1{print \$3}' p_mt_spp.txt) p_mt_spp.txt | sort -t\$'\t' -k 10n,10 > p_mt_sppA.txt
 chrcolor=1
 for scafnamesel2 in \$(cat scafname-sel); do
-        grep \${scafnamesel2} p_mt_spp-sel.txt | sort -t\$'\t' -k 10n,10 > p_mt_spp-\${scafnamesel2}.txt
+        grep \${scafnamesel2} ${i}-p_mt_spp-sel.txt | sort -t\$'\t' -k 10n,10 > p_mt_spp-\${scafnamesel2}.txt
         awk '{print \"chr1\t\"\$10\"\t\"\$11\"\tfill_color=chr'\"\$chrcolor\"'\"}' p_mt_spp-\${scafnamesel2}.txt >> ${i}-p_circos/data/highlights.1.txt
         awk '{print \"chr1\t\"\$10\"\t\"\$11\"\t\"\$5}' p_mt_spp-\${scafnamesel2}.txt >> ${i}-p_circos/data/labels.1.txt
         let chrcolor=chrcolor+1
@@ -92,7 +100,7 @@ for scafnamesel2 in \$(cat scafname-sel); do
 done
 #awk '{print \"chr1\t\"\$10\"\t\"\$11\"\tfill_color=green\"}' p_mt_sppA.txt > ${i}-p_circos/data/highlights.1.txt
 #awk '{print \"chr1\t\"\$10\"\t\"\$11\"\t\"\$5}' p_mt_sppA.txt > ${i}-p_circos/data/labels.1.txt
-awk 'NR==1{print \"chr\t-\tchr1\t\"\$1\".mtDNA.circos.by.Zelin.Li\t0\t\"\$2\"\tchry\"}' p_mt_spp.txt > ${i}-p_circos/data/mtDNAideogram.txt
+awk 'NR==1{print \"chr\t-\tchr1\t\"\$1\".mtDNA.circos.by.Zelin.Li\t0\t\"\$2\"\tchry\"}' ${i}-p_mt_spp.txt > ${i}-p_circos/data/mtDNAideogram.txt
 #rm -rf p_mt_sppA.txt
 rm -rf scafname-sel
 
