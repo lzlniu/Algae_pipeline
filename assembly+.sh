@@ -1,6 +1,6 @@
 #!/bin/bash
 #author:Zelin Li
-#date:2020.02.26
+#date:2020.02.29
 #utility:assemble paired-end clean data(reads,fastq format), use platanus, do blast search and make circos graph.
 cd /PATH/TO/WHERE/YOU/WANT/TO/GET/RESULT
 for i in $(cat list);do
