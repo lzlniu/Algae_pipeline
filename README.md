@@ -30,7 +30,3 @@ an introduction of assembly+ (in Chinese).
 ### 2.5 mtDNAppt.py
 
 a python script which need python-pptx to operate. It is used to collect the information from the data outputs of assembly+ (including n50.sh stats, CIRCOS graph, closest species and it mtDNA length, suspective mtDNA scaffolds number and sum of length).
-
-## 3 gbaa.sh
-
-gbaa.sh is the bash shell script to extract the amino acids sequence from the .gb file.
