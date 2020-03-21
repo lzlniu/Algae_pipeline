@@ -1,4 +1,4 @@
-# sh_pipeline
+# NGS_pipeline
 ## 1 call_variant.sh
 
 call_variant.sh is a bioinformatics pipeline which use BWA, SAMtools and VarScan to identity the difference of multiple genome. It can automatically call snp and indel, forming .vcf files from sequencing clean data (reads, fastq format).
