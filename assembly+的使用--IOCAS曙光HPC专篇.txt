@@ -66,3 +66,10 @@ export PATH=/public/home/liushuya/abyss/bin:$PATH
 export PATH=/public/home/liushuya/platanus:$PATH
 export PATH=/public/home/liushuya/spades/bin:$PATH
 export PATH=/public/home/liushuya/circos-0.69-9/bin:$PATH
+
+6.开始使用assembly+
+git clone https://github.com/lzlniu/NGS_pipeline.git
+cd NGS_pipeline
+chmod 777 *.sh
+./assembly+.sh /public/home/liushuya/lzl_test/ /public/home/liushuya/Sm/data/clean_data_12/
+注：第一个文件夹是你想存放结果的文件夹，第二个文件夹是你的reads（clean data）所在的文件夹，里面的文件名称务必以_1_clean.fq、_2_clean.fq结尾！！！
