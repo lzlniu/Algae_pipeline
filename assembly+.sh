@@ -11,6 +11,8 @@ cp list $workload_path
 cp assembly_*.sh $workload_path
 cp n50.sh $workload_path
 cp blast_and_circos.sh $workload_path
+cd $readsfq_path
+ls *_1_clean.fq | sed -e 's/_1_clean.fq//g' > ${workload_path}list
 cd $workload_path
 for i in $(cat list); do
 	mkdir ${i}

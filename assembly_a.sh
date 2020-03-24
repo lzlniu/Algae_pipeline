@@ -13,10 +13,14 @@ echo "#BSUB -L /bin/bash
 #BSUB -e abyss_${i}.err
 
 cd ${i}
-
+mkdir abyss && cd abyss
+abyss-pe np=4 name=${i}-a k=128 in='${readsfq_path}${i}_1_clean.fq ${readsfq_path}${i}_2_clean.fq'
+cp ${i}-a-8.fa ../${i}_a_scaffolds.fa
+cp ${i}-a-stats.tab ../${i}_a_stats.txt
+cd ..
 ../blast_and_circos.sh ${i}_a_scaffolds.fa
 " > abyss_${i}.sh
 done
-for j in $(cat list);do
+for j in $(cat list); do
 bsub < abyss_${j}.sh
 done

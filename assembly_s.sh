@@ -13,10 +13,12 @@ echo "#BSUB -L /bin/bash
 #BSUB -e spades_${i}.err
 
 cd ${i}
-
+spades.py -1 ${readsfq_path}${i}_1_clean.fq -2 ${readsfq_path}${i}_2_clean.fq -o spades
+cp spades/scaffolds.fasta ${i}_s_scaffolds.fa
+../n50.sh ${i}_s_scaffolds.fa > ${i}_s_stats.txt
 ../blast_and_circos.sh ${i}_s_scaffolds.fa
 " > spades_${i}.sh
 done
-for j in $(cat list);do
+for j in $(cat list); do
 bsub < spades_${j}.sh
 done

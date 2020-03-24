@@ -16,17 +16,18 @@ cd ${i}
 platanus_allee assemble -f ${readsfq_path}${i}_1_clean.fq ${readsfq_path}${i}_2_clean.fq -o p
 platanus_allee phase -c p_contig.fa -IP1 ${readsfq_path}${i}_1_clean.fq ${readsfq_path}${i}_2_clean.fq -o p
 platanus_allee consensus -c p_consensusInput.fa -IP1 ${readsfq_path}${i}_1_clean.fq ${readsfq_path}${i}_2_clean.fq -o ${i}_p
-../n50.sh ${i}_p_consensusScaffold.fa > ${i}_p_stats.txt
-#platanus_allee consensus -c p_contig.fa -IP1 ${readsfq_path}${i}_1_clean.fq ${readsfq_path}${i}_2_clean.fq -o ${i}_p_nophase
-#../n50.sh ${i}_p_nophase_consensusScaffold.fa > ${i}_p_nophase_stats.txt
-rm -rf p_intermediateResults
-rm -rf *_consensusIntermediateResults
-rm -rf p_nonBubble*
-rm -rf p_allPhasedScaffold.fa
 mv ${i}_p_consensusScaffold.fa ${i}_p_scaffolds.fa
+../n50.sh ${i}_p_scaffolds.fa > ${i}_p_stats.txt
+#platanus_allee consensus -c p_contig.fa -IP1 ${readsfq_path}${i}_1_clean.fq ${readsfq_path}${i}_2_clean.fq -o ${i}_p_nophase
+#mv ${i}_p_nophase_consensusScaffold.fa ${i}_p_nophase_scaffolds.fa
+#../n50.sh ${i}_p_nophase_scaffolds.fa > ${i}_p_nophase_stats.txt
+#rm -rf p_intermediateResults
+#rm -rf *_consensusIntermediateResults
+#rm -rf p_nonBubble*
+#rm -rf p_allPhasedScaffold.fa
 ../blast_and_circos.sh ${i}_p_scaffolds.fa
 " > platanus_${i}.sh
 done
-for j in $(cat list);do
+for j in $(cat list); do
 bsub < platanus_${j}.sh
 done

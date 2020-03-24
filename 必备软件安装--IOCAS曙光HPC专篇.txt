@@ -1,0 +1,68 @@
+1.ABySS(https://github.com/bcgsc/abyss/releases)
+下载最新版(abyss-X.X.X.tar.gz)，将压缩包上传至服务器自己目录下。然后：
+tar -zxvf abyss-*.*.*.tar.gz
+cd abyss-*.*.*
+./configure --prefix=/public/home/liushuya/abyss --with-boost=/usr/include/boost --with-mpi=/public/software/mpi/openmpi/intel2019/4.0.0 --with-sparsehash=/public/sharefolder/chennansheng/lzl_data/software/sparsehash --with-sqlite=/bin/sqlite3 --enable-maxk=160
+make AM_CXXFLAGS=-Wall
+make install
+cd ..
+rm -rf abyss-*.*.*
+
+2.Platanus(http://platanus.bio.titech.ac.jp/platanus2)
+下载最新版(v.X.X.X Linux 64 bit binary (precompiled))，将压缩包上传至服务器自己目录下。然后：
+tar -zxvf Platanus_allee_v*.*.*_Linux_x86_64.tgz
+mv Platanus_allee_v*.*.*_Linux_x86_64 platanus
+rm -rf Platanus_allee_v*.*.*_Linux_x86_64.tgz
+
+3.SPAdes(http://cab.spbu.ru/software/spades/)
+下载最新版(Download SPAdes binaries for Linux (64-bit only))，将压缩包上传至服务器自己目录下。然后：
+tar -zxvf SPAdes-*.*.*-Linux.tar.gz
+mv SPAdes-*.*.*-Linux spades
+rm -rf SPAdes-*.*.*-Linux.tar.gz
+
+4.CIRCOS(http://circos.ca/software/download/)
+下载最新版(circos-current.tgz)，将压缩包上传至服务器自己目录下。然后：
+tar -zxvf circos-*.tgz
+rm -rf circos-*.tgz
+cd circos-*/bin
+./circos -module
+根据显示缺失的模块补充安装。或者按照下面内容查看缺失的模块也可以：
+./circos -help
+出现很多error，每个error上一句是missing XXXX（比如Font::TTF::Font、Clone、Config::General、Math::Round等等）。根据./circos -module、./circos -help发现缺失的module，使用cpan安装perl module：
+cd
+cpan
+yes
+yes
+install Font::TTF::Font
+install Config::General
+install Math::Bezier
+install Math::Round
+install SVG
+install Readonly
+install Math::VecStat
+install Set::IntSpan
+install Statistics::Basic
+install Regexp::Common
+install Text::Format
+install List::MoreUtils::XS
+install Exporter::Tiny
+install ExtUtils::PkgConfig
+install Clone
+exit
+使用perldoc perllocal可以查看perl module的安装情况。进入cd circos-*/bin然后./circos -module查看是否所有circos需要的perl module都安装完毕。
+
+5.环境变量配置(包含BLAST的环境变量配置)
+到自己目录下编辑.bashrc文件（通过命令vi .bashrc，然后按键a进入输入模式），内部内容改为类似下面这样（添加BLAST、ABySS、Platanus、SPAdes、CIRCOS环境变量），然后保存并退出（通过按键Esc然后输入:wq）：
+# .bashrc
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+        . /etc/bashrc
+fi
+# Uncomment the following line if you don't like systemctl's auto-paging feature:
+# export SYSTEMD_PAGER=
+# User specific aliases and functions
+source /public/software/profile.d/apps_ncbi-blast-2.10.0+.sh
+export PATH=/public/home/liushuya/abyss/bin:$PATH
+export PATH=/public/home/liushuya/platanus:$PATH
+export PATH=/public/home/liushuya/spades/bin:$PATH
+export PATH=/public/home/liushuya/circos-0.69-9/bin:$PATH
