@@ -7,6 +7,7 @@
 yourname=$1
 cd
 mkdir assembly
+cd assembly
 cp /public/sharefolder/chennansheng/lzl_data/software/abyss-*.*.*.tar.gz ./
 #or wget https://github.com/bcgsc/abyss/releases/download/2.2.4/abyss-2.2.4.tar.gz
 tar -zxvf abyss-*.*.*.tar.gz
@@ -21,14 +22,14 @@ rm -rf abyss-*.*.*
 cp /public/sharefolder/chennansheng/lzl_data/software/Platanus_allee_v*.*.*_Linux_x86_64.tgz ./
 #can't wget, you have to download it from http://platanus.bio.titech.ac.jp/platanus2 
 tar -zxvf Platanus_allee_v*.*.*_Linux_x86_64.tgz
-mv Platanus_allee_v*.*.*_Linux_x86_64 ./assembly/platanus
+mv Platanus_allee_v*.*.*_Linux_x86_64 platanus
 rm -rf Platanus_allee_v*.*.*_Linux_x86_64.tgz
 #get platanus(http://platanus.bio.titech.ac.jp/platanus2)
 
 cp /public/sharefolder/chennansheng/lzl_data/software/SPAdes-*.*.*-Linux.tar.gz ./
 #or wget http://cab.spbu.ru/files/release3.14.0/SPAdes-3.14.0-Linux.tar.gz
 tar -zxvf SPAdes-*.*.*-Linux.tar.gz
-mv SPAdes-*.*.*-Linux ./assembly/spades
+mv SPAdes-*.*.*-Linux spades
 rm -rf SPAdes-*.*.*-Linux.tar.gz
 #get spades(http://cab.spbu.ru/software/spades/)
 
@@ -36,7 +37,6 @@ cp /public/sharefolder/chennansheng/lzl_data/software/circos-*.tgz ./
 #or wget http://circos.ca/distribution/circos-current.tgz
 tar -zxvf circos-*.tgz
 rm -rf circos-*.tgz
-mv circos-* ./assembly/
 #get circos(http://circos.ca/software/download/)
 
 #下面是按照circos必备perl模块的步骤：

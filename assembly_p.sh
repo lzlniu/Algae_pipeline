@@ -1,13 +1,14 @@
 #!/bin/bash
 #author:Zelin Li
 #date:2020.03.23
+#usage:bash assembly_p.sh /PATH/TO/CLEAN/DATA/READS/ /PATH/TO/BLAST/QUERY/SEQS.fa
 #utility:assemble paired-end clean data(reads,fastq format), use platanus, do blast search and make circos graph.
 
 readsfq_path=$1
+query=$2
 for i in $(cat list); do
 echo "#BSUB -L /bin/bash
 #BSUB -J platanus_${i}.sh
-#BSUB -q fat
 #BSUB -n 4
 #BSUB -o platanus_${i}.out
 #BSUB -e platanus_${i}.err
@@ -25,7 +26,7 @@ mv ${i}_p_consensusScaffold.fa ${i}_p_scaffolds.fa
 #rm -rf *_consensusIntermediateResults
 #rm -rf p_nonBubble*
 #rm -rf p_allPhasedScaffold.fa
-../blast_and_circos.sh ${i}_p_scaffolds.fa
+../blast_and_circos.sh ${i}_p_scaffolds.fa ${query}
 " > platanus_${i}.sh
 done
 for j in $(cat list); do

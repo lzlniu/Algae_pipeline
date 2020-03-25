@@ -68,6 +68,9 @@ export PATH=/public/home/liushuya/spades/bin:$PATH
 export PATH=/public/home/liushuya/circos-0.69-9/bin:$PATH
 
 6.开始使用assembly+
+cd
+cp /public/sharefolder/chennansheng/lzl_data/REFseq/mt.fa ./lzl_test/
+cd ..
 git clone https://github.com/lzlniu/NGS_pipeline.git
 cd NGS_pipeline
 chmod 777 *.sh

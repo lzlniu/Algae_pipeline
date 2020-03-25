@@ -2,7 +2,7 @@
 #author:Zelin Li
 #date:2020.03.23
 #utility:make blast search and make circos graph.
-#usage:bash blast_and_circos.sh scaffolds.fa
+#usage:bash blast_and_circos.sh scaffolds.fa /PATH/TO/BLAST/QUERY/SEQS.fa
 #output:
 #1.scaffolds.fa_mt_blast.txt
 #2.scaffolds.fa_mt_spp.txt
@@ -13,8 +13,9 @@
 #7.scaffolds.fa_mt.png
 
 scafs=$1
+query=$2
 makeblastdb -in ${scafs} -dbtype nucl -parse_seqids -out ${scafs}.db
-blastn -query ../../mt.fa -db ${scafs}.db -outfmt '6 qseqid qlen sseqid slen pident length mismatch gapopen gaps qstart qend sstart send evalue bitscore' -out ${scafs}_mt_blast.txt
+blastn -query $query -db ${scafs}.db -outfmt '6 qseqid qlen sseqid slen pident length mismatch gapopen gaps qstart qend sstart send evalue bitscore' -out ${scafs}_mt_blast.txt
 rm -rf ${scafs}.db.*
 
 #make blast search for mtDNA
