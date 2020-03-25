@@ -9,7 +9,7 @@ workload_path=$1
 readsfq_path=$2
 query=$3
 #cp list $workload_path
-cp mt.fa $workload_path
+#cp mt.fa $workload_path
 cp assembly_*.sh $workload_path
 cp n50.sh $workload_path
 cp blast_and_circos.sh $workload_path
