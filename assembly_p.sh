@@ -9,6 +9,7 @@ query=$2
 for i in $(cat list); do
 echo "#BSUB -L /bin/bash
 #BSUB -J platanus_${i}.sh
+#BSUB -q fat
 #BSUB -n 4
 #BSUB -o platanus_${i}.out
 #BSUB -e platanus_${i}.err
