@@ -27,12 +27,13 @@ rm -rf ${scafs}.spp
 
 #extract the cloest mtDNA species(spp) blast results
 
-uniq -f 2 -w 20 ${scafs}_mt_spp.txt > ${scafs}_mt_scaf.all
+#uniq -f 2 -w 20 ${scafs}_mt_spp.txt > ${scafs}_mt_scaf.all
+sort -t$'\t' -u -k 3,3 ${scafs}_mt_spp.txt | sort -t$'\t' -k 15rn,15 > ${scafs}_mt_scaf.all
 awk '{print $4}' ${scafs}_mt_scaf.all > ${scafs}.scaflen
 awk '{print $3}' ${scafs}_mt_scaf.all  > ${scafs}.scafname
 grep -n "" ${scafs}_mt_scaf.all | awk -F ':' '{print $1}' > ${scafs}.scafline
 rm -rf ${scafs}_mt_scaf.all
-sed -n 1p ${scafs}.scafname > ${scafs}.scafname.sel
+sed -n '1'p ${scafs}.scafname > ${scafs}.scafname.sel
 for line1 in $(cat ${scafs}.scafline); do
         ((line2=$line1+1))
         linemax=`echo $(awk END'{print $1}' ${scafs}.scafline)`;
@@ -45,7 +46,7 @@ for line1 in $(cat ${scafs}.scafline); do
         if ((m >= n)) || ((m < 1000)); then
                 break
         else
-                sed -n ${line2}p scafname >> ${scafs}.scafname.sel
+                sed -n ${line2}p ${scafs}.scafname >> ${scafs}.scafname.sel
         fi
 done
 rm -rf ${scafs}.scaflen
@@ -59,8 +60,10 @@ done
 
 awk NR==1'{print "closest diatom species:"$1}' ${scafs}_mt_spp.sel.txt > ${scafs}_mt_spp.sel.info.txt
 awk NR==1'{print "closest diatom species mtDNA length:"$2}' ${scafs}_mt_spp.sel.txt >> ${scafs}_mt_spp.sel.info.txt
-uniq -f 2 -w 20 ${scafs}_mt_spp.sel.txt | wc -l | awk '{print "number of mtDNA scaffolds:"$1}' >> ${scafs}_mt_spp.sel.info.txt
-uniq -f 2 -w 20 ${scafs}_mt_spp.sel.txt | awk '{sum += $4};END {print "sum of mtDNA scaffolds length:"sum}' >> ${scafs}_mt_spp.sel.info.txt
+#uniq -f 2 -w 20 ${scafs}_mt_spp.sel.txt | wc -l | awk '{print "number of mtDNA scaffolds:"$1}' >> ${scafs}_mt_spp.sel.info.txt
+#uniq -f 2 -w 20 ${scafs}_mt_spp.sel.txt | awk '{sum += $4};END {print "sum of mtDNA scaffolds length:"sum}' >> ${scafs}_mt_spp.sel.info.txt
+sort -t$'\t' -u -k 3,3 ${scafs}_mt_spp.sel.txt | sort -t$'\t' -k 15rn,15 | wc -l | awk '{print "number of mtDNA scaffolds:"$1}' >> ${scafs}_mt_spp.sel.info.txt
+sort -t$'\t' -u -k 3,3 ${scafs}_mt_spp.sel.txt | sort -t$'\t' -k 15rn,15 | awk '{sum += $4};END {print "sum of mtDNA scaffolds length:"sum}' >> ${scafs}_mt_spp.sel.info.txt
 
 #collect the information about the mtDNA scaffolds
 
