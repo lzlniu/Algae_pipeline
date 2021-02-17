@@ -13,7 +13,7 @@ blank_slide_layout = prs.slide_layouts[6]
 slide = prs.slides.add_slide(title_slide_layout)
 title = slide.shapes.title
 subtitle = slide.placeholders[1]
-title.text = "Pn mtDNA assembly"
+title.text = "Pg mtDNA assembly"
 subtitle.text = "Zelin Li 2020/04/10"
 
 def text_read(filename):
@@ -94,4 +94,4 @@ for j in range(len(test_strand)):
 
 pass
 
-prs.save('Pn_mtDNA.pptx')
+prs.save('Pg_mtDNA.pptx')
