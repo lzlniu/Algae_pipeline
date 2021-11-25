@@ -1,4 +1,4 @@
-# NGS_pipeline
+# NGS_pipeline [![GitHub license](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/lzlniu/NGS_pipeline/blob/main/LICENSE)
 ## 1 assembly+
 
 assembly+ is for genome assembly, using abyss, platanus and spades, generating a sets of assembly results, which include most of the intermediate data (contig, etc.) and statistics (n50, max scaffold length, etc.). It also make a blast, comparing with multiple mtDNA and select the 'closest' species blast results; then select the scaffolds that may be related with mtDNA of this strand. At last, extract these scaffolds and form a new fasta file. Finally, it automatically draw a CIRCOS graph from hsp information of the final selection sets of blast results.
